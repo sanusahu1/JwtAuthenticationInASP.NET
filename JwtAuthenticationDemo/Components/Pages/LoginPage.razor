@@ -1,0 +1,40 @@
+﻿
+@page "/login"
+@rendermode InteractiveServer
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-4">
+            <h2>LoginPage</h2>
+            <EditForm Model="@Login" OnValidSubmit="LoginClicked">
+                <DataAnnotationsValidator />
+                <div class="mb-3">
+                    <label for="exampleInputEmail1" class="form-label">Email address</label>
+                    <InputText @bind-Value="Login.Email" class="form-control"></InputText>
+                    <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+                </div>
+                <div class="mb-3">
+                    <label for="exampleInputPassword1" class="form-label">Password</label>
+                    <InputText @bind-Value="Login.Password" class="form-control"></InputText>
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+@code {
+    public LoginDTO Login = new();
+    async Task LoginClicked()
+    {
+        LoginResopnse resopnse = await accountService.LoginAsync(Login);
+        if (!resopnse.Flag)
+        {
+            await js.InvokeVoidAsync("alert", resopnse.Message);
+            return;
+        }
+
+        CustomAuthenticationStateProvider.UpdateAuthenticationState(resopnse.JWTToken);
+        NavManager.NavigateTo("/", forceLoad: true);
+    }
+}
