@@ -63,7 +63,9 @@ namespace JwtAuthenticationDemo.States
             {
                 Constants.JWTToken = null;
             }
-            //NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(claimPrincipal)));
+            CustomAuthenticationStateProvider _stateProvider = new CustomAuthenticationStateProvider();
+            _stateProvider.NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(claimPrincipal)));
+
         }
     }
 }

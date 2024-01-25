@@ -5,7 +5,7 @@
     <div class="row">
         <div class="col-sm-4">
             <h2>Register Page</h2>
-            <EditForm Model="@Register" OnValidSubmit="RegisterClicked">
+            <EditForm Model="@Register" OnValidSubmit="RegisterClicked" FormName="registrationForm">
                 <DataAnnotationsValidator />
                 <div class="mb-3">
                     <label for="exampleInputEmail1" class="form-label">Name </label>
