@@ -26,7 +26,23 @@ namespace JwtAuthenticationDemo.States
                 return await Task.FromResult(new AuthenticationState(_principal));
             }
         }
+        public static void UpdateAuthenticationState(string jwtToken)
+        {
+            var claimPrincipal = new ClaimsPrincipal();
+            if (!string.IsNullOrEmpty(jwtToken))
+            {
+                Constants.JWTToken = jwtToken;
+                var getUserClaim = DecryptToken(jwtToken);
+                claimPrincipal = SetClaimPrincipal(getUserClaim);
+            }
+            else
+            {
+                Constants.JWTToken = null;
+            }
+            CustomAuthenticationStateProvider _stateProvider = new CustomAuthenticationStateProvider();
+            _stateProvider.NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(claimPrincipal)));
 
+        }
         public static ClaimsPrincipal SetClaimPrincipal(CustomUserClaim claims)
         {
             if (claims.Email is null) return new ClaimsPrincipal();
@@ -48,24 +64,6 @@ namespace JwtAuthenticationDemo.States
             var name = token.Claims.FirstOrDefault(_ => _.Type == ClaimTypes.Name);
             var email = token.Claims.FirstOrDefault(_=> _.Type == ClaimTypes.Email);
             return new CustomUserClaim(name!.Value , email!.Value);
-        }
-
-        public static void UpdateAuthenticationState(string jwtToken)
-        {
-            var claimPrincipal = new ClaimsPrincipal();
-            if (!string.IsNullOrEmpty(jwtToken))
-            {
-                Constants.JWTToken = jwtToken;
-                var getUserClaim = DecryptToken(jwtToken);
-                claimPrincipal = SetClaimPrincipal(getUserClaim);
-            }
-            else
-            {
-                Constants.JWTToken = null;
-            }
-            CustomAuthenticationStateProvider _stateProvider = new CustomAuthenticationStateProvider();
-            _stateProvider.NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(claimPrincipal)));
-
         }
     }
 }
